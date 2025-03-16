@@ -1,12 +1,22 @@
 import random
+import socket
 
 class NetworkLayer:
     def __init__(self):
-        self.src_ip = self.generate_ip()
+        self.src_ip = self.get_local_ip()
         self.dest_ip = None
 
-    def generate_ip(self):
-        return ".".join(str(random.randint(0, 255)) for _ in range(4))
+    def get_local_ip(self):
+        """Get the actual local IP address of the machine."""
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(("8.8.8.8", 80))
+            ip = s.getsockname()[0]
+            s.close()
+            return ip
+        except Exception as e:
+            print(f"[Network Layer] ERROR: Unable to get local IP - {e}")
+            return "127.0.0.1"  # Fallback
 
     def send(self, data, dest_ip):
         self.dest_ip = dest_ip

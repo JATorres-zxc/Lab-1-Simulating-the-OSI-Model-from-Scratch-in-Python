@@ -1,12 +1,15 @@
 import random
+import uuid
 
 class DataLinkLayer:
     def __init__(self):
-        self.src_mac = self.generate_mac()
+        self.src_mac = self.get_mac_address()
         self.dest_mac = None
 
-    def generate_mac(self):
-        return ':'.join(f"{random.randint(0x00, 0xFF):02x}" for _ in range(6))
+    def get_mac_address(self):
+        """Get the actual MAC address of the machine."""
+        mac = uuid.UUID(int=uuid.getnode()).hex[-12:]
+        return ":".join(mac[i : i + 2] for i in range(0, 12, 2))
 
     def send(self, data, dest_mac):
         self.dest_mac = dest_mac
